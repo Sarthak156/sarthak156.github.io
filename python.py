@@ -30,5 +30,5 @@ def number_guessing_game():
 
     print(f"Congratulations! You guessed the number {number_to_guess} in {attempts} attempts.")
 
-
-number_guessing_game()
+if __name__ == "__main__":
+    number_guessing_game()
