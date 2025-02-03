@@ -1,32 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 </head>
 <body>
-    <h1>Music Player</h1>
-    <input type="text" id="songName" placeholder="Enter song name">
-    <button onclick="playSong()">Play</button>
-    <button onclick="stopSong()">Stop</button>
-    <p id="status"></p>
-
+    <button onclick="runPython()">Run Python File</button>
+    <p id="output"></p>
     <script>
-        async function playSong() {
-            let songName = document.getElementById("songName").value;
-            let response = await fetch("/play", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ song_name: songName })
-            });
-            let data = await response.json();
-            document.getElementById("status").innerText = data.status === "playing" ? "Playing: " + data.song : data.message;
-        }
-
-        async function stopSong() {
-            await fetch("/stop", { method: "POST" });
-            document.getElementById("status").innerText = "Stopped";
+        async function runPython() {
+            let pyodide = await loadPyodide();
+            let response = await fetch('app.py');
+            let code = await response.text();
+            let result = pyodide.runPython(code);
+            document.getElementById("output").innerText = result;
         }
     </script>
 </body>
