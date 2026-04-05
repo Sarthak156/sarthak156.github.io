@@ -1,0 +1,195 @@
+/* ============================================
+   SPECIAL — Cursor, Music, Easter Egg
+   ============================================ */
+
+/* ── Custom Cursor ── */
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  will-change: transform;
+}
+
+.cursor-core {
+  width: 8px;
+  height: 8px;
+  background: var(--neon-purple);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--neon-purple), 0 0 24px var(--neon-purple-glow);
+}
+
+.cursor-ring-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(155, 89, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hover states */
+body.cursor-hover .cursor-ring-outer {
+  width: 50px;
+  height: 50px;
+  border-color: var(--neon-purple);
+}
+body.cursor-hover .cursor-core {
+  transform: scale(0.5);
+}
+
+.cursor-trail {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: var(--neon-purple);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: calc(var(--z-cursor) - 1);
+  opacity: 0.2;
+  filter: blur(1px);
+  will-change: transform;
+}
+
+body.custom-cursor-active,
+body.custom-cursor-active a,
+body.custom-cursor-active button,
+body.custom-cursor-active input,
+body.custom-cursor-active textarea,
+body.custom-cursor-active [onclick] {
+  cursor: none !important;
+}
+
+/* ── Music Toggle ── */
+.music-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: var(--z-nav);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+
+.music-toggle:hover {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  box-shadow: 0 0 12px var(--neon-purple-glow);
+}
+
+.music-toggle.playing {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  animation: mPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes mPulse {
+  0%, 100% { box-shadow: 0 0 6px var(--neon-purple-glow); }
+  50% { box-shadow: 0 0 18px var(--neon-purple-glow); }
+}
+
+/* Music icon — clean SVG-free note */
+.music-icon {
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Eq bars for playing state */
+.eq-bars {
+  display: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.music-toggle.playing .music-icon { display: none; }
+.music-toggle.playing .eq-bars { display: flex; }
+
+.eq-bar {
+  width: 3px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.eq-bar:nth-child(1) { animation: eqB 0.6s ease-in-out infinite; }
+.eq-bar:nth-child(2) { animation: eqB 0.5s ease-in-out infinite 0.1s; }
+.eq-bar:nth-child(3) { animation: eqB 0.7s ease-in-out infinite 0.2s; }
+.eq-bar:nth-child(4) { animation: eqB 0.4s ease-in-out infinite 0.15s; }
+
+@keyframes eqB {
+  0%, 100% { height: 3px; }
+  50% { height: 14px; }
+}
+
+/* ── Easter Egg ── */
+.easter-egg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(5, 5, 8, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+.easter-egg-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ee-text {
+  font-family: var(--font-accent);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  color: var(--neon-red);
+  text-shadow: 0 0 30px var(--neon-red-glow);
+  text-align: center;
+  letter-spacing: 0.1em;
+  animation: eeFlicker 0.1s ease-in-out 3;
+}
+
+@keyframes eeFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.ee-eye {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--neon-red);
+  animation: eeSpin 2s linear infinite;
+  box-shadow: 0 0 30px var(--neon-red-glow);
+  background: radial-gradient(circle, var(--neon-red) 15%, transparent 60%);
+}
+
+@keyframes eeSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .custom-cursor, .cursor-trail { display: none !important; }
+  body.custom-cursor-active,
+  body.custom-cursor-active a,
+  body.custom-cursor-active button { cursor: auto !important; }
+  .music-toggle { bottom: 12px; right: 12px; width: 36px; height: 36px; }
+}

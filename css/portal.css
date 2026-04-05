@@ -1,0 +1,125 @@
+/* ============================================
+   PORTAL GATE — Solo Leveling Transition
+   ============================================ */
+#portal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-portal);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The dimensional crack / gate */
+.portal-gate {
+  position: absolute;
+  width: 0;
+  height: 100vh;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(155,89,255,0.1),
+    rgba(0,212,255,0.2),
+    rgba(155,89,255,0.8),
+    #fff,
+    rgba(155,89,255,0.8),
+    rgba(0,212,255,0.2),
+    rgba(155,89,255,0.1),
+    transparent
+  );
+  transition: width 0.6s var(--ease-out-expo);
+  filter: blur(0px);
+  box-shadow: 0 0 60px var(--neon-purple-glow), 0 0 120px rgba(155,89,255,0.2);
+}
+
+.portal-gate.crack {
+  width: 4px;
+  filter: blur(1px);
+}
+
+.portal-gate.opening {
+  width: 110vw;
+  filter: blur(0);
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(155,89,255,0.05) 10%,
+    rgba(10,10,20,0.95) 25%,
+    #050508 40%,
+    #050508 60%,
+    rgba(10,10,20,0.95) 75%,
+    rgba(155,89,255,0.05) 90%,
+    transparent 100%
+  );
+  transition: width 0.8s var(--ease-out-expo);
+}
+
+.portal-gate.closing {
+  width: 0;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Portal edge glow lines */
+.portal-edge {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--neon-purple), var(--neon-blue), var(--neon-purple), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 10px var(--neon-purple), 0 0 30px var(--neon-blue-glow);
+}
+
+.portal-edge.left { left: 0; transform: translateX(-1px); }
+.portal-edge.right { right: 0; transform: translateX(1px); }
+
+.portal-gate.crack .portal-edge,
+.portal-gate.opening .portal-edge { opacity: 1; }
+.portal-gate.closing .portal-edge { opacity: 0; }
+
+/* Portal particles */
+.portal-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.portal-gate.crack .portal-particles,
+.portal-gate.opening .portal-particles { opacity: 1; }
+
+.portal-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--neon-purple);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--neon-purple);
+  animation: portalParticleFloat 1.5s ease-in infinite;
+}
+
+@keyframes portalParticleFloat {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-20vh) translateX(var(--px-drift)); opacity: 0; }
+}
+
+/* Top/bottom energy lines during transition */
+.portal-energy-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-purple), var(--neon-blue), var(--neon-purple), transparent);
+  transition: width 0.6s var(--ease-out-expo);
+  box-shadow: 0 0 8px var(--neon-purple-glow);
+}
+
+.portal-energy-line.top { top: 0; }
+.portal-energy-line.bottom { bottom: 0; }
+
+.portal-gate.crack ~ .portal-energy-line { width: 30vw; }
+.portal-gate.opening ~ .portal-energy-line { width: 100vw; }
+.portal-gate.closing ~ .portal-energy-line { width: 0; }

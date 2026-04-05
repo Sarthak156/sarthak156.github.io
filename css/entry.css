@@ -1,0 +1,103 @@
+/* ============================================
+   ENTRY SCREEN — Mangekyo Sharingan
+   ============================================ */
+#entry-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-entry);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#entry-screen.hidden {
+  pointer-events: none;
+}
+
+.mangekyo-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.mangekyo-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 20px var(--neon-red-glow)) drop-shadow(0 0 60px rgba(255,45,85,0.3));
+  opacity: 0;
+  transform: scale(0.5);
+  animation: mangekyoAppear 1.5s var(--ease-out-expo) 0.5s forwards;
+}
+
+@keyframes mangekyoAppear {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Spin animation — applied via JS after appear */
+.mangekyo-svg.spinning {
+  animation: mangekyoSpin 3s linear infinite;
+}
+
+@keyframes mangekyoSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Accelerating spin */
+.mangekyo-svg.accelerating {
+  animation: mangekyoAccel 1.5s cubic-bezier(0.4,0,1,1) forwards;
+}
+
+@keyframes mangekyoAccel {
+  0% { transform: rotate(0deg); filter: drop-shadow(0 0 20px var(--neon-red-glow)); }
+  100% { transform: rotate(1080deg); filter: drop-shadow(0 0 80px var(--neon-red)) drop-shadow(0 0 120px var(--neon-red-glow)); }
+}
+
+/* Iris open effect — circular clip expanding */
+.iris-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-entry) - 1);
+  background: #000;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 1.2s var(--ease-out-expo);
+}
+
+.iris-reveal.open {
+  clip-path: circle(150% at 50% 50%);
+}
+
+/* Entry text */
+.entry-text {
+  font-family: var(--font-accent);
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: var(--neon-red);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: entryTextFade 1s ease 2s forwards;
+}
+
+@keyframes entryTextFade {
+  to { opacity: 0.7; }
+}
+
+/* Click prompt */
+.entry-prompt {
+  position: absolute;
+  bottom: 80px;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  opacity: 0;
+  animation: promptPulse 2s ease-in-out 3.5s infinite;
+}
+
+@keyframes promptPulse {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
