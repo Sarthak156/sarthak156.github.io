@@ -222,10 +222,40 @@ class App {
     const form = document.querySelector('.contact-form');
     const btn = document.querySelector('.submit-btn');
     if (form && btn) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        btn.classList.add('sent');
-        btn.textContent = '✓ SENT';
+        
+        const formData = new FormData(form);
+        const data = {
+          access_key: formData.get('access_key'),
+          subject: formData.get('subject'),
+          from_name: formData.get('from_name'),
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message')
+        };
+
+        btn.textContent = 'SENDING...';
+        
+        try {
+          const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            btn.classList.add('sent');
+            btn.textContent = '✓ SENT';
+          } else {
+            btn.textContent = 'ERROR';
+          }
+        } catch (error) {
+          btn.textContent = 'ERROR';
+        }
+
         setTimeout(() => {
           btn.classList.remove('sent');
           btn.textContent = 'SEND MESSAGE';
