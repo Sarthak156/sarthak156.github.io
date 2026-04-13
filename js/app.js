@@ -9,6 +9,9 @@ class App {
     this.bg = null;
     this.portal = null;
     this.nav = null;
+    this.pageOrder = ['landing', 'about', 'skills', 'projects', 'experience', 'contact'];
+    this.touchStartX = 0;
+    this.touchEndX = 0;
 
     document.querySelectorAll('.page').forEach(p => {
       this.pages[p.id.replace('page-', '')] = p;
@@ -23,8 +26,24 @@ class App {
     // 2. Init portal transition
     this.portal = new PortalTransition();
 
-    // 3. Entry screen
-    new EntryScreen(() => this.onEntryComplete());
+    // 3. Handle intro video
+    const introVideo = document.querySelector('.intro-video');
+    if (introVideo) {
+      introVideo.addEventListener('ended', () => {
+        const overlay = document.getElementById('intro-overlay');
+        if (overlay) overlay.classList.add('fade-out');
+      });
+      // Fallback: fade out after 6 seconds if video doesn't end
+      setTimeout(() => {
+        const overlay = document.getElementById('intro-overlay');
+        if (overlay && !overlay.classList.contains('fade-out')) {
+          overlay.classList.add('fade-out');
+        }
+      }, 6000);
+    }
+
+    // 4. Show nav and landing
+    this.onEntryComplete();
   }
 
   onEntryComplete() {
@@ -42,6 +61,9 @@ class App {
     new GhostCursor();
     new MusicPlayer();
     new EasterEgg();
+
+    // Init swipe navigation
+    this.initSwipe();
 
     // Init page-specific features
     this.initSkillsDomain();
@@ -64,7 +86,7 @@ class App {
     const logo = document.querySelector('.nav-logo');
     if (logo) {
       logo.addEventListener('click', () => {
-        if (this.currentPage !== 'landing') this.navigateTo('landing');
+        this.navigateTo('landing');
       });
     }
 
@@ -111,10 +133,61 @@ class App {
     this.showPage(name, true);
   }
 
+  navigatePrev() {
+    const currentIndex = this.pageOrder.indexOf(this.currentPage);
+    if (currentIndex > 0) {
+      this.navigateTo(this.pageOrder[currentIndex - 1]);
+    }
+  }
+
+  navigateNext() {
+    const currentIndex = this.pageOrder.indexOf(this.currentPage);
+    if (currentIndex < this.pageOrder.length - 1) {
+      this.navigateTo(this.pageOrder[currentIndex + 1]);
+    }
+  }
+
   updateNav(name) {
     document.querySelectorAll('.nav-link').forEach(l => {
       l.classList.toggle('active', l.dataset.page === name);
     });
+  }
+
+  // ── Swipe Navigation ──
+  initSwipe() {
+    document.addEventListener('touchstart', (e) => {
+      if (e.target.closest('#app')) {
+        this.touchStartX = e.changedTouches[0].screenX;
+        console.log('touchstart', this.touchStartX);
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (e.target.closest('#app')) {
+        this.touchEndX = e.changedTouches[0].screenX;
+        console.log('touchend', this.touchEndX);
+        this.handleSwipe();
+      }
+    }, { passive: true });
+  }
+
+  handleSwipe() {
+    const threshold = 50;
+    const diff = this.touchEndX - this.touchStartX;
+    console.log('diff', diff, 'threshold', threshold);
+
+    if (Math.abs(diff) < threshold) return;
+
+    const currentIndex = this.pageOrder.indexOf(this.currentPage);
+    console.log('currentIndex', currentIndex, 'page', this.currentPage);
+
+    if (diff > 0 && currentIndex > 0) {
+      console.log('navigating prev');
+      this.navigateTo(this.pageOrder[currentIndex - 1]);
+    } else if (diff < 0 && currentIndex < this.pageOrder.length - 1) {
+      console.log('navigating next');
+      this.navigateTo(this.pageOrder[currentIndex + 1]);
+    }
   }
 
   // ── Skills Domain Expansion ──
